@@ -75,16 +75,22 @@ pipeline {
         }
 
         // ===== RESTART TOMCAT =====
-        stage('Restart Tomcat') {
-            steps {
-                sh '''
-                echo "Restarting Tomcat server..."
-                $TOMCAT_HOME/bin/shutdown.sh || true
-                sleep 3
-                $TOMCAT_HOME/bin/startup.sh
-                '''
-            }
-        }
+       stage('Restart Tomcat') {
+    steps {
+        sh '''
+        echo "Attempting to restart Tomcat..."
+        if [ -x "$TOMCAT_HOME/bin/shutdown.sh" ] && [ -x "$TOMCAT_HOME/bin/startup.sh" ]; then
+            $TOMCAT_HOME/bin/shutdown.sh || true
+            sleep 3
+            $TOMCAT_HOME/bin/startup.sh
+            echo "Tomcat restarted successfully."
+        else
+            echo "⚠️ Tomcat scripts not found in $TOMCAT_HOME/bin — skipping restart."
+        fi
+        '''
+    }
+}
+
     }
 
     post {
