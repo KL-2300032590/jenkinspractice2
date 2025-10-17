@@ -26,19 +26,17 @@ pipeline {
                 sh '''
                 FRONTEND_PATH="$TOMCAT_HOME/webapps/frontendjenkinsp"
 
-                echo "Deploying React frontend to $FRONTEND_PATH"
-
-                # Remove old frontend build
+                # Remove old frontend
                 rm -rf "$FRONTEND_PATH"
                 mkdir -p "$FRONTEND_PATH"
 
-                # Copy new build output
-                if [ -d "reactfrontend/dist" ]; then
-                    cp -R reactfrontend/dist/* "$FRONTEND_PATH/"
-                elif [ -d "reactfrontend/build" ]; then
+                # Detect build output folder
+                if [ -d "reactfrontend/build" ]; then
                     cp -R reactfrontend/build/* "$FRONTEND_PATH/"
+                elif [ -d "reactfrontend/dist" ]; then
+                    cp -R Sreactfrontend/dist/* "$FRONTEND_PATH/"
                 else
-                    echo "❌ No frontend build folder found!"
+                    echo "No frontend build output found!"
                     exit 1
                 fi
                 '''
@@ -50,7 +48,7 @@ pipeline {
             steps {
                 dir('springbootbackend') {
                     sh '''
-                    mvn clean package -DskipTests
+                    mvn clean package
                     '''
                 }
             }
@@ -62,20 +60,16 @@ pipeline {
                 sh '''
                 WEBAPPS_PATH="$TOMCAT_HOME/webapps"
 
-                echo "Deploying Spring Boot WAR to Tomcat..."
-
-                # Clean old deployment
                 rm -f "$WEBAPPS_PATH/springprojects.war"
                 rm -rf "$WEBAPPS_PATH/springprojects"
 
-                # Copy the new WAR
-                cp springbootbackend/target/springprojects.war "$WEBAPPS_PATH/"
+                cp springbootbackend/target/*.war "$WEBAPPS_PATH/"
                 '''
             }
         }
 
         // ===== RESTART TOMCAT =====
-      stage('Restart Tomcat') {
+        stage('Restart Tomcat') {
             steps {
                 sh '''
                 $TOMCAT_HOME/bin/shutdown.sh || true
@@ -83,15 +77,15 @@ pipeline {
                 $TOMCAT_HOME/bin/startup.sh
                 '''
             }
-      }
+        }
     }
 
     post {
         success {
-            echo '✅ Deployment Successful!'
+            echo 'Deployment Successful!'
         }
         failure {
-            echo '❌ Pipeline Failed.'
+            echo 'Pipeline Failed.'
         }
     }
 }
