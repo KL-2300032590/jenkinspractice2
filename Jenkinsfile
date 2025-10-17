@@ -34,7 +34,7 @@ pipeline {
                 if [ -d "reactfrontend/build" ]; then
                     cp -R reactfrontend/build/* "$FRONTEND_PATH/"
                 elif [ -d "reactfrontend/dist" ]; then
-                    cp -R Sreactfrontend/dist/* "$FRONTEND_PATH/"
+                    cp -R reactfrontend/dist/* "$FRONTEND_PATH/"
                 else
                     echo "No frontend build output found!"
                     exit 1
