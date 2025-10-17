@@ -83,7 +83,7 @@ pipeline {
                 $TOMCAT_HOME/bin/startup.sh
                 '''
             }
-
+      }
     }
 
     post {
