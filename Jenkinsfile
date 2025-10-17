@@ -1,10 +1,12 @@
 pipeline {
     agent any
 
+   
     environment {
-        PATH = "/opt/homebrew/bin:/Users/pardhasaradhireddy/maven/bin:${env.PATH}"
-        TOMCAT_HOME = "/Users/pardhasaradhireddy/apache-tomcat-10.1.43"
-    }
+    PATH = "/opt/homebrew/bin:/Users/pardhasaradhireddy/maven/bin:${env.PATH}"
+    TOMCAT_HOME = "/Users/pardhasaradhireddy/Desktop/apache-tomcat-10.1.43"
+}
+
 
     stages {
 
